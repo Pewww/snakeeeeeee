@@ -1,13 +1,6 @@
-class A {
-  public vv() {
+import Main from './models/Main';
+import Stage from './models/Stage';
 
-  }
-}
-
-class B extends A {
-  public override vv() {
-    console.log(111);
-  }
-}
-
-new B().vv();
+new Main(
+  new Stage(40, 16)
+).render();
