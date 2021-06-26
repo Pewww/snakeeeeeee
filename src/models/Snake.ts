@@ -1,5 +1,7 @@
 import range from 'lodash.range';
 
+import { AVAILABLE_KEY } from '../constants/key';
+
 type SnakeStartPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 
 type SnakePosition = {
@@ -26,45 +28,83 @@ export default class Snake {
   }
 
   public moveSnake(e: KeyboardEvent) {
-    // @TODO: 스테이지 밖으로 벗어날 때에 대한 예외 처리
-    const positionLastIdx = this.position.length - 1;
-    const positionLastElement = this.position[positionLastIdx];
-
-    const ConvertEventKeyToHeadPosition = {
-      ArrowUp: {
-        x: positionLastElement.x,
-        y: positionLastElement.y - 1
-      },
-      ArrowLeft: {
-        x: positionLastElement.x - 1,
-        y: positionLastElement.y
-      },
-      ArrowRight: {
-        x: positionLastElement.x + 1,
-        y: positionLastElement.y
-      },
-      ArrowDown: {
-        x: positionLastElement.x,
-        y: positionLastElement.y + 1
-      }
-    };
-
-    if (!ConvertEventKeyToHeadPosition[e.key]) {
+    if (!(e.key in AVAILABLE_KEY)) {
       return;
     }
 
     const newPosition = [...this.position];
+    const positionLastIdx = this.position.length - 1;
+    const currPositionHead = this.position[positionLastIdx];
 
-    newPosition[positionLastIdx] = ConvertEventKeyToHeadPosition[e.key];
+    switch(e.key) {
+      case 'ArrowUp': {
+        if (this.isYPositionOutOfMap(currPositionHead.y - 1)) {
+          return;
+        }
 
-    for (let idx = this.position.length - 2; idx >= 0; idx--) {
+        newPosition[positionLastIdx] = {
+          x: currPositionHead.x,
+          y: currPositionHead.y - 1
+        };
+
+        break;
+      }
+      case 'ArrowLeft': {
+        if (this.isXPositionOutOfMap(currPositionHead.x - 1)) {
+          return;
+        }
+
+        newPosition[positionLastIdx] = {
+          x: currPositionHead.x - 1,
+          y: currPositionHead.y
+        };
+
+        break;
+      }
+      case 'ArrowRight': {
+        if (this.isXPositionOutOfMap(currPositionHead.x + 1)) {
+          return;
+        }
+
+        newPosition[positionLastIdx] = {
+          x: currPositionHead.x + 1,
+          y: currPositionHead.y
+        };
+
+        break;
+      }
+      case 'ArrowDown': {
+        if (this.isYPositionOutOfMap(currPositionHead.y + 1)) {
+          return;
+        }
+
+        newPosition[positionLastIdx] = {
+          x: currPositionHead.x,
+          y: currPositionHead.y + 1
+        };
+
+        break;
+      }
+    }
+
+    const currPositionBodyStarts = this.position.length - 2;
+
+    for (let idx = currPositionBodyStarts; idx >= 0; idx--) {
       newPosition[idx] = {
         x: this.position[idx + 1].x,
         y: this.position[idx + 1].y
-      };
+      }
     }
 
     this.setPosition(newPosition);
+  }
+
+  private isXPositionOutOfMap(x: number) {
+    return x < 0 || x >= this.stageSize; 
+  }
+
+  private isYPositionOutOfMap(y: number) {
+    return y < 0 || y >= this.stageSize;
   }
 
   private setInitialPosition() {
