@@ -6,7 +6,7 @@ import { OBJECT_STATUS_BY_LEVEL, TITLE_FONT_SIZE_BY_LEVEL } from './constants/le
 import { $id } from './utils/dom';
 
 const parsedQuery = queryString.parse(location.search);
-const level = Number((parsedQuery as any).level ?? '1');
+const level = Number((parsedQuery as Record<string, unknown>).level ?? '1');
 
 new Main(
   new Game(
