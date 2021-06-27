@@ -6,6 +6,7 @@ import Item from './Item';
 import { $create, $id } from '../utils/dom';
 import { getRandomNumber } from '../utils/random';
 import { ROTATE_DEGREE } from '../constants/rotate';
+import { OBJECT_STATUS_BY_LEVEL } from '../constants/level';
 
 type StageBaseFrame = 'block'
   | 'snake-body'
@@ -28,15 +29,15 @@ export default class Game {
   private goal: Goal;
   private item: Item;
 
-  constructor(stageSize: number, blockSize: number) {
+  constructor(stageSize: number, blockSize: number, level: number) {
     this.stageSize = stageSize;
     this.blockSize = blockSize;
     this._status = null;
     this.rotateDegree = 0;
 
-    this.snake = new Snake(10, stageSize, 'bottom-left');
-    this.item = new Item(5, stageSize);
-    this.bomb = new Bomb(stageSize, 'bottom-left', this.item.position);
+    this.snake = new Snake(OBJECT_STATUS_BY_LEVEL[level].snakeSize, stageSize, 'bottom-left');
+    this.item = new Item(OBJECT_STATUS_BY_LEVEL[level].itemsCount, stageSize);
+    this.bomb = new Bomb(OBJECT_STATUS_BY_LEVEL[level].bombsCount, stageSize, this.item.position);
     this.goal = new Goal(stageSize, 'bottom-left');
 
     this.setKeyDownEventHandler();
@@ -170,6 +171,14 @@ export default class Game {
         target: null,
         position: null
       });
+
+      if (this._status !== null) {
+        this.showResultByStatus();
+      }
     });
+  }
+
+  private showResultByStatus() {
+    console.log(this._status);
   }
 }

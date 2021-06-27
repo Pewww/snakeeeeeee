@@ -4,20 +4,14 @@ import { getRandomNumber } from '../utils/random';
 
 export default class Bomb {
   private stageSize: number;
-  private snakeStartPosition: SnakeStartPosition;
   private _position: ObjectPosition[];
   private itemPosition: ObjectPosition[];
-  private bombsPerXPosition: number;
+  private count: number;
 
-  constructor(
-    stageSize: number,
-    snakeStartPosition: SnakeStartPosition,
-    itemPosition: ObjectPosition[]
-  ) {
+  constructor(count: number, stageSize: number, itemPosition: ObjectPosition[]) {
     this.stageSize = stageSize;
-    this.snakeStartPosition = snakeStartPosition;
     this.itemPosition = itemPosition;
-    this.bombsPerXPosition = 4;
+    this.count = count;
 
     this.render();
   }
@@ -30,24 +24,24 @@ export default class Bomb {
     const randomPosition = [];
     let innerRandomPosition = [];
 
-    for (let y = 1; y < this.stageSize - 2; y++) {
-      while (innerRandomPosition.length < this.bombsPerXPosition) {
+    for (let y = 1; y < this.stageSize - 1; y++) {
+      while (innerRandomPosition.length < this.count) {
         const randomX = getRandomNumber(1, this.stageSize - 2);
-        const randomY = getRandomNumber(1, this.stageSize - 2);
+        // @TODO: Prevent Bombs from completely blocking the way to the Item.
   
-        const positionAlreadyExists = !!this.itemPosition.filter(({ x, y }) =>
-          x === randomX && y === randomY
-          ||
-          // Prevent Bombs from completely blocking the way to the Item.
-          (x + 1 === randomX || x - 1 === randomX)
-          ||
-          (y + 1 === randomY || y - 1 === randomY)
+        const positionAlreadyExistsInItem = !!this.itemPosition.filter(({ x: itemX, y: itemY }) =>
+          itemX === randomX && itemY === y
         ).length;
 
-        if (!positionAlreadyExists) {
+        const positionAlreadyExistsInInnerArr = !!innerRandomPosition.filter(({ x: innerX, y: innerY }) =>
+          innerX === randomX && innerY === y
+        ).length;
+
+
+        if (!positionAlreadyExistsInItem && !positionAlreadyExistsInInnerArr) {
           innerRandomPosition.push({
             x: randomX,
-            y: randomY
+            y
           });
         }
       }
