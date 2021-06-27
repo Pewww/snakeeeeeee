@@ -1,13 +1,13 @@
-import Stage from "./Stage";
+import Game from './Game';
 
 export default class Main {
-  private stage: Stage;
+  private game: Game;
 
-  constructor(stage: Stage) {
-    this.stage = stage;
+  constructor(game: Game) {
+    this.game = game;
   }
 
   public render() {
-    this.stage.render();
+    this.game.render();
   }
 }

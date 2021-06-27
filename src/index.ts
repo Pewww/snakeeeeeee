@@ -1,6 +1,6 @@
 import Main from './models/Main';
-import Stage from './models/Stage';
+import Game from './models/Game';
 
 new Main(
-  new Stage(40, 16)
+  new Game(40, 16)
 ).render();

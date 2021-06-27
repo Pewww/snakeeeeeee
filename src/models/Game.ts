@@ -10,10 +10,13 @@ type StageBaseFrame = 'block'
   | 'bomb'
   | 'goal';
 
-export default class Stage {
+type GameStatus = 'start' | 'success' | 'over';
+
+export default class Game {
   private stageSize: number;
   private blockSize: number;
   private frame: StageBaseFrame[][] = [];
+  private _status: GameStatus;
   
   private snake: Snake;
   private bomb: Bomb;
@@ -22,6 +25,7 @@ export default class Stage {
   constructor(stageSize: number, blockSize: number) {
     this.stageSize = stageSize;
     this.blockSize = blockSize;
+    this._status = null;
 
     this.snake = new Snake(10, stageSize, 'bottom-left');
     this.bomb = new Bomb(stageSize, 'bottom-left');
@@ -102,15 +106,23 @@ export default class Stage {
     this.frame[goalPosition.y][goalPosition.x] = 'goal';
   }
 
-  private setKeyupEventHandler() {
-    // @TODO: 키를 꾹 눌렀을 때에 대한 이동 처리 필요
-    document.body.addEventListener('keyup', e => {
-      this.snake.moveSnake(e);
-      this.render();
-    });
+  private setStatus(status: GameStatus) {
+    this._status = status;
   }
 
-  private unsetKeyupEventHandler() {
-    document.body.removeEventListener('keyup', this.snake.moveSnake);
+  private setKeyupEventHandler() {
+    document.body.addEventListener('keyup', e => {
+      this.snake.moveSnake(e, this.bomb.position, this.goal.position);
+      this.render();
+
+      // Set Game Status
+      const snakeCollidedWith = this.snake.collidedWith;
+
+      if (snakeCollidedWith === 'Goal') {
+        this.setStatus('success');
+      } else if (snakeCollidedWith === 'Bomb') {
+        this.setStatus('over');
+      }
+    });
   }
 }

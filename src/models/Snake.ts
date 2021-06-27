@@ -5,16 +5,20 @@ import { AVAILABLE_KEY } from '../constants/key';
 
 export type SnakeStartPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 
+type SnakeCollidedWith = 'Bomb' | 'Item' | 'Goal';
+
 export default class Snake {
   private size: number;
   private stageSize: number;
   private startPosition: SnakeStartPosition;
   private _position: ObjectPosition[];
+  private _collidedWith: SnakeCollidedWith;
 
   constructor(size: number, stageSize: number, startPosition: SnakeStartPosition) {
     this.size = size;
     this.stageSize = stageSize;
     this.startPosition = startPosition;
+    this._collidedWith = null;
 
     this.setInitialPosition();
   }
@@ -23,14 +27,22 @@ export default class Snake {
     return this._position;
   }
 
-  public moveSnake(e: KeyboardEvent) {
+  public get collidedWith() {
+    return this._collidedWith;
+  }
+
+  public moveSnake(
+    e: KeyboardEvent,
+    bombPosition: ObjectPosition[],
+    goalPosition: ObjectPosition
+  ) {
     if (!(e.key in AVAILABLE_KEY)) {
       return;
     }
 
-    const newPosition = [...this.position];
-    const positionLastIdx = this.position.length - 1;
-    const currPositionHead = this.position[positionLastIdx];
+    const newPosition = [...this._position];
+    const positionLastIdx = this._position.length - 1;
+    const currPositionHead = this._position[positionLastIdx];
 
     switch(e.key) {
       case 'ArrowUp': {
@@ -83,16 +95,43 @@ export default class Snake {
       }
     }
 
-    const currPositionBodyStarts = this.position.length - 2;
+    const currPositionBodyStarts = this._position.length - 2;
 
     for (let idx = currPositionBodyStarts; idx >= 0; idx--) {
       newPosition[idx] = {
-        x: this.position[idx + 1].x,
-        y: this.position[idx + 1].y
+        x: this._position[idx + 1].x,
+        y: this._position[idx + 1].y
       }
     }
 
     this.setPosition(newPosition);
+
+    // Detect collision after setting new position
+    this.detectCollision(bombPosition, goalPosition);
+  }
+
+  private detectCollision(bombPosition: ObjectPosition[], goalPosition: ObjectPosition) {
+    if (this.isCollidedWithGoal(goalPosition)) {
+      this.setCollidedWith('Goal');
+    } else if (this.isCollidedWithBomb(bombPosition)) {
+      this.setCollidedWith('Bomb');
+    }
+  }
+
+  private isCollidedWithBomb(bombPosition: ObjectPosition[]) {
+    const head = this._position[this._position.length - 1];
+    const collidedBomb = bombPosition.filter(({ x, y }) =>
+      x === head.x && y === head.y
+    );
+
+    return !!collidedBomb.length;
+  }
+
+  private isCollidedWithGoal(goalPosition: ObjectPosition) {
+    const head = this._position[this._position.length - 1];
+
+    return head.x === goalPosition.x
+      && head.y === goalPosition.y;
   }
 
   private isXPositionOutOfMap(x: number) {
@@ -155,5 +194,9 @@ export default class Snake {
 
   private setPosition(position: ObjectPosition[]) {
     this._position = position;
+  }
+
+  private setCollidedWith(collidedWith: SnakeCollidedWith) {
+    this._collidedWith = collidedWith;
   }
 }
