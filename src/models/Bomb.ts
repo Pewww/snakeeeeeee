@@ -18,11 +18,15 @@ export default class Bomb {
   }
 
   private render() {
-    this._position = [
+    this.setPosition([
       {
         x: 20,
         y: 20
       }
-    ];
+    ]);
+  }
+
+  private setPosition(position: ObjectPosition[]) {
+    this._position = position;
   }
 }

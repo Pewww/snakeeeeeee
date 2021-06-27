@@ -1,6 +1,7 @@
 import Snake from './Snake';
 import Bomb from './Bomb';
 import Goal from './Goal';
+import Item from './Item';
 
 import { $create, $id } from '../utils/dom';
 
@@ -8,6 +9,7 @@ type StageBaseFrame = 'block'
   | 'snake-body'
   | 'snake-head'
   | 'bomb'
+  | 'item'
   | 'goal';
 
 type GameStatus = 'start' | 'success' | 'over';
@@ -21,6 +23,7 @@ export default class Game {
   private snake: Snake;
   private bomb: Bomb;
   private goal: Goal;
+  private item: Item;
 
   constructor(stageSize: number, blockSize: number) {
     this.stageSize = stageSize;
@@ -30,6 +33,7 @@ export default class Game {
     this.snake = new Snake(10, stageSize, 'bottom-left');
     this.bomb = new Bomb(stageSize, 'bottom-left');
     this.goal = new Goal(stageSize, 'bottom-left');
+    this.item = new Item(10, stageSize);
 
     this.setKeyupEventHandler();
   }
@@ -93,6 +97,11 @@ export default class Game {
       this.frame[y][x] = idx === snakeLastPosition
         ? 'snake-head'
         : 'snake-body';
+    });
+
+    // Set Item Position
+    this.item.position.forEach(({ x, y }) => {
+      this.frame[y][x] = 'item';
     });
 
     // Set Bomb Position

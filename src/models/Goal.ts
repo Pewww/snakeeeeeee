@@ -20,39 +20,43 @@ export default class Goal {
   private render() {
     switch(this.snakeStartPosition) {
       case 'top-left': {
-        this._position = {
+        this.setPosition({
           x: this.stageSize - 1,
           y: this.stageSize - 1
-        };
+        });
 
         break;
       }
       case 'top-right': {
-        this._position = {
+        this.setPosition({
           x: 0,
           y: this.stageSize - 1
-        };
+        });
 
         break;
       }
       case 'bottom-left': {
-        this._position = {
+        this.setPosition({
           x: this.stageSize - 1,
           y: 0
-        };
+        });
 
         break;
       }
       case 'bottom-right': {
-        this._position = {
+        this.setPosition({
           x: 0,
           y: 0
-        };
+        });
 
         break;
       }
       default:
         break;
     }
+  }
+
+  private setPosition(position: ObjectPosition) {
+    this._position = position;
   }
 }
