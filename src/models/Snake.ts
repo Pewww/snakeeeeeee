@@ -1,19 +1,15 @@
 import range from 'lodash.range';
 
+import { ObjectPosition } from '../types/position';
 import { AVAILABLE_KEY } from '../constants/key';
 
 type SnakeStartPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
-
-type SnakePosition = {
-  x: number;
-  y: number;
-};
 
 export default class Snake {
   private size: number;
   private stageSize: number;
   private startPosition: SnakeStartPosition;
-  private _position: SnakePosition[];
+  private _position: ObjectPosition[];
 
   constructor(size: number, stageSize: number, startPosition: SnakeStartPosition) {
     this.size = size;
@@ -157,7 +153,7 @@ export default class Snake {
     }
   }
 
-  private setPosition(position: SnakePosition[]) {
+  private setPosition(position: ObjectPosition[]) {
     this._position = position;
   }
 }
