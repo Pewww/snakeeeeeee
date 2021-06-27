@@ -39,7 +39,7 @@ export default class Item {
     this.setPosition(randomPosition);
   }
 
-  private setPosition(position: ObjectPosition[]) {
+  public setPosition(position: ObjectPosition[]) {
     this._position = position;
   }
 }

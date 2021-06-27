@@ -4,6 +4,8 @@ import Goal from './Goal';
 import Item from './Item';
 
 import { $create, $id } from '../utils/dom';
+import { getRandomNumber } from '../utils/random';
+import { ROTATE_DEGREE } from '../constants/rotate';
 
 type StageBaseFrame = 'block'
   | 'snake-body'
@@ -19,6 +21,7 @@ export default class Game {
   private blockSize: number;
   private frame: StageBaseFrame[][] = [];
   private _status: GameStatus;
+  private rotateDegree: number;
   
   private snake: Snake;
   private bomb: Bomb;
@@ -29,13 +32,18 @@ export default class Game {
     this.stageSize = stageSize;
     this.blockSize = blockSize;
     this._status = null;
+    this.rotateDegree = 0;
 
     this.snake = new Snake(10, stageSize, 'bottom-left');
     this.bomb = new Bomb(stageSize, 'bottom-left');
     this.goal = new Goal(stageSize, 'bottom-left');
-    this.item = new Item(10, stageSize);
+    this.item = new Item(5, stageSize);
 
     this.setKeyupEventHandler();
+  }
+
+  public get status() {
+    return this._status;
   }
 
   public render() {
@@ -61,7 +69,7 @@ export default class Game {
   
           cellElement.style.width = `${this.blockSize}px`;
           cellElement.style.height = `${this.blockSize}px`;
-  
+
           if (cell !== 'block') {
             cellElement.className = cell;
           }
@@ -72,6 +80,7 @@ export default class Game {
         rootElement.appendChild(rowElement);
       });
 
+      rootElement.style.transform = `rotate(${this.rotateDegree}deg)`;
       document.body.appendChild(rootElement); 
     }
   }
@@ -119,19 +128,48 @@ export default class Game {
     this._status = status;
   }
 
+  private setRotateDegree(rotateDegree: number) {
+    this.rotateDegree = rotateDegree;
+  }
+
   private setKeyupEventHandler() {
     document.body.addEventListener('keyup', e => {
-      this.snake.moveSnake(e, this.bomb.position, this.goal.position);
-      this.render();
+      this.snake.moveSnake(
+        e,
+        this.bomb.position,
+        this.goal.position,
+        this.item.position
+      );
 
       // Set Game Status
-      const snakeCollidedWith = this.snake.collidedWith;
+      const snakeCollisionInfo = this.snake.collisionInfo;
 
-      if (snakeCollidedWith === 'Goal') {
-        this.setStatus('success');
-      } else if (snakeCollidedWith === 'Bomb') {
+      if (snakeCollisionInfo.target === 'Item') {
+        const filteredItemPosition = this.item.position.filter(({ x, y }) =>
+          x !== snakeCollisionInfo.position.x && y !== snakeCollisionInfo.position.y
+        );
+        const randomRotateDegree = ROTATE_DEGREE[
+          getRandomNumber(0, ROTATE_DEGREE.length - 1)
+        ];
+
+        this.item.setPosition(filteredItemPosition);
+        this.setRotateDegree(randomRotateDegree);
+      } else if (snakeCollisionInfo.target === 'Bomb') {
         this.setStatus('over');
+      } else if (snakeCollisionInfo.target === 'Goal') {
+        const isAllItemsEatenBySnake = !this.item.position.length;
+
+        this.setStatus(isAllItemsEatenBySnake
+          ? 'success'
+          : 'over'
+        );
       }
+
+      this.render();
+      this.snake.setCollisionInfo({
+        target: null,
+        position: null
+      });
     });
   }
 }
