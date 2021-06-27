@@ -39,7 +39,7 @@ export default class Game {
     this.goal = new Goal(stageSize, 'bottom-left');
     this.item = new Item(5, stageSize);
 
-    this.setKeyupEventHandler();
+    this.setKeyDownEventHandler();
   }
 
   public get status() {
@@ -132,8 +132,8 @@ export default class Game {
     this.rotateDegree = rotateDegree;
   }
 
-  private setKeyupEventHandler() {
-    document.body.addEventListener('keyup', e => {
+  private setKeyDownEventHandler() {
+    document.body.addEventListener('keydown', e => {
       this.snake.moveSnake(
         e,
         this.bomb.position,
