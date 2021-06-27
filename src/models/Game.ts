@@ -92,8 +92,8 @@ export default class Game {
     const isFrameEmpty = this.frame.length === 0;
 
     if (isFrameEmpty) {
-      this.frame = [...new Array(this.stageSize).fill(0)]
-        .map(() => [...new Array(this.stageSize)].fill(0));
+      this.frame = [...new Array(this.stageSize).fill('block')]
+        .map(() => [...new Array(this.stageSize)].fill('block'));
     } else {
       this.frame.forEach((row, rowIdx) => {
         row.forEach((_, cellIdx) => {
@@ -102,9 +102,9 @@ export default class Game {
       })
     }
 
+    // Set Snake Position
     const snakeLastPosition = this.snake.position.length - 1;
 
-    // Set Snake Position
     this.snake.position.forEach(({ x, y }, idx) => {
       this.frame[y][x] = idx === snakeLastPosition
         ? 'snake-head'
