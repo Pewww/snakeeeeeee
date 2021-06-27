@@ -1,8 +1,14 @@
 import Snake from './Snake';
+import Bomb from './Bomb';
+import Goal from './Goal';
 
 import { $create, $id } from '../utils/dom';
 
-type StageBaseFrame = 0 | 1 | 2;
+type StageBaseFrame = 'block'
+  | 'snake-body'
+  | 'snake-head'
+  | 'bomb'
+  | 'goal';
 
 export default class Stage {
   private stageSize: number;
@@ -10,12 +16,16 @@ export default class Stage {
   private frame: StageBaseFrame[][] = [];
   
   private snake: Snake;
+  private bomb: Bomb;
+  private goal: Goal;
 
   constructor(stageSize: number, blockSize: number) {
     this.stageSize = stageSize;
     this.blockSize = blockSize;
 
     this.snake = new Snake(10, stageSize, 'bottom-left');
+    this.bomb = new Bomb(stageSize, 'bottom-left');
+    this.goal = new Goal(stageSize, 'bottom-left');
 
     this.setKeyupEventHandler();
   }
@@ -35,19 +45,17 @@ export default class Stage {
       const rootElement = $create('ul');
       rootElement.id = 'root';
   
-      this.frame.forEach((row) => {
+      this.frame.forEach(rows => {
         const rowElement = $create('li');
   
-        row.forEach((cell) => {
+        rows.forEach((cell) => {
           const cellElement = $create('div');
   
           cellElement.style.width = `${this.blockSize}px`;
           cellElement.style.height = `${this.blockSize}px`;
   
-          if (cell === 1) {
-            cellElement.className = 'snake-body';
-          } else if (cell === 2) {
-            cellElement.className = 'snake-head';
+          if (cell !== 'block') {
+            cellElement.className = cell;
           }
   
           rowElement.appendChild(cellElement);
@@ -55,7 +63,7 @@ export default class Stage {
   
         rootElement.appendChild(rowElement);
       });
-  
+
       document.body.appendChild(rootElement); 
     }
   }
@@ -69,18 +77,29 @@ export default class Stage {
     } else {
       this.frame.forEach((row, rowIdx) => {
         row.forEach((_, cellIdx) => {
-          this.frame[rowIdx][cellIdx] = 0;
+          this.frame[rowIdx][cellIdx] = 'block';
         });
       })
     }
 
     const snakeLastPosition = this.snake.position.length - 1;
 
+    // Set Snake Position
     this.snake.position.forEach(({ x, y }, idx) => {
       this.frame[y][x] = idx === snakeLastPosition
-        ? 2
-        : 1;
+        ? 'snake-head'
+        : 'snake-body';
     });
+
+    // Set Bomb Position
+    this.bomb.position.forEach(({ x, y }) => {
+      this.frame[y][x] = 'bomb';
+    });
+
+    // Set Goal Position
+    const goalPosition = this.goal.position;
+
+    this.frame[goalPosition.y][goalPosition.x] = 'goal';
   }
 
   private setKeyupEventHandler() {
