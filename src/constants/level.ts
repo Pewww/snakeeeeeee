@@ -21,3 +21,9 @@ export const OBJECT_STATUS_BY_LEVEL = {
     blockSize: 16
   }
 };
+
+export const TITLE_FONT_SIZE_BY_LEVEL = {
+  1: 40,
+  2: 50,
+  3: 56
+};

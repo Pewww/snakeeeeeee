@@ -1,4 +1,3 @@
-import type { SnakeStartPosition } from './Snake';
 import { ObjectPosition } from '../types/position';
 import { getRandomNumber } from '../utils/random';
 

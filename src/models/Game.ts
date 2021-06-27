@@ -23,6 +23,7 @@ export default class Game {
   private frame: StageBaseFrame[][] = [];
   private _status: GameStatus;
   private rotateDegree: number;
+  private level: number;
   
   private snake: Snake;
   private bomb: Bomb;
@@ -34,6 +35,7 @@ export default class Game {
     this.blockSize = blockSize;
     this._status = null;
     this.rotateDegree = 0;
+    this.level = level;
 
     this.snake = new Snake(OBJECT_STATUS_BY_LEVEL[level].snakeSize, stageSize, 'bottom-left');
     this.item = new Item(OBJECT_STATUS_BY_LEVEL[level].itemsCount, stageSize);
@@ -179,6 +181,21 @@ export default class Game {
   }
 
   private showResultByStatus() {
-    console.log(this._status);
+    if (this._status === 'success') {
+      const isConfirmed = confirm(`Level ${this.level} success!\nGo to next level.`);
+
+      if (isConfirmed) {
+        // @TODO: Add logic for levels above 3
+        location.href = `${location.pathname}?level=${this.level === 3
+          ? 1
+          : this.level + 1
+        }`;
+      } else {
+        location.reload();
+      }
+    } else if (this._status === 'over') {
+      alert(`Level ${this.level} failed!`);
+      location.reload();
+    }
   }
 }
