@@ -35,9 +35,9 @@ export default class Game {
     this.rotateDegree = 0;
 
     this.snake = new Snake(10, stageSize, 'bottom-left');
-    this.bomb = new Bomb(stageSize, 'bottom-left');
-    this.goal = new Goal(stageSize, 'bottom-left');
     this.item = new Item(5, stageSize);
+    this.bomb = new Bomb(stageSize, 'bottom-left', this.item.position);
+    this.goal = new Goal(stageSize, 'bottom-left');
 
     this.setKeyDownEventHandler();
   }
@@ -149,7 +149,7 @@ export default class Game {
           x !== snakeCollisionInfo.position.x && y !== snakeCollisionInfo.position.y
         );
         const randomRotateDegree = ROTATE_DEGREE[
-          getRandomNumber(0, ROTATE_DEGREE.length - 1)
+          getRandomNumber(0, ROTATE_DEGREE.length)
         ];
 
         this.item.setPosition(filteredItemPosition);

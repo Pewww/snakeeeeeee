@@ -20,7 +20,7 @@ export default class Item {
   private render() {
     const randomPosition = [];
 
-    while(randomPosition.length < this.count) {
+    while (randomPosition.length < this.count) {
       const randomX = getRandomNumber(1, this.stageSize - 2);
       const randomY = getRandomNumber(1, this.stageSize - 2);
 
