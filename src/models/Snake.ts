@@ -3,7 +3,7 @@ import range from 'lodash.range';
 import { ObjectPosition } from '../types/position';
 import { AVAILABLE_KEY } from '../constants/key';
 
-type SnakeStartPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+export type SnakeStartPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 
 export default class Snake {
   private size: number;
