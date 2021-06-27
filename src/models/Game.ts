@@ -149,7 +149,7 @@ export default class Game {
 
       if (snakeCollisionInfo.target === 'Item') {
         const filteredItemPosition = this.item.position.filter(({ x, y }) =>
-          x !== snakeCollisionInfo.position.x && y !== snakeCollisionInfo.position.y
+          !(x === snakeCollisionInfo.position.x && y === snakeCollisionInfo.position.y)
         );
         const randomRotateDegree = ROTATE_DEGREE[
           getRandomNumber(0, ROTATE_DEGREE.length)
