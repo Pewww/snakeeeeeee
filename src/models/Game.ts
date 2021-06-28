@@ -196,21 +196,31 @@ export default class Game extends BaseObject {
   }
 
   private showResultByStatus() {
-    if (this._status === 'success') {
-      const isConfirmed = confirm(`Level ${this.level} success!\nGo to next level.`);
+    switch(this._status) {
+      case 'success': {
+        const MAX_LEVEL = 5;
 
-      if (isConfirmed) {
-        // @TODO: Add logic for levels above 3
-        location.href = `${location.pathname}?level=${this.level === 3
-          ? 1
-          : this.level + 1
-        }`;
-      } else {
-        location.reload();
+        if (this.level < MAX_LEVEL) {
+          const isConfirmed = confirm(`Level ${this.level} passed!\nGo to next level.`);
+
+          if (isConfirmed) {
+            location.href = `${location.pathname}?level=${this.level + 1}`;
+          } else {
+            location.reload();
+          }
+        } else {
+          alert('You passed all levels! Congratulations :D');
+          location.href = location.pathname;
+        }
+
+        break;
       }
-    } else if (this._status === 'over') {
-      alert(`Level ${this.level} failed!`);
-      location.reload();
+      case 'over': {
+        alert(`Level ${this.level} failed!`);
+        location.reload();
+
+        break;
+      }
     }
   }
 }

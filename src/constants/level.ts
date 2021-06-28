@@ -19,11 +19,27 @@ export const OBJECT_STATUS_BY_LEVEL = {
     snakeSize: 10,
     itemsCount: 5,
     blockSize: 16
+  },
+  4: {
+    bombsCount: 5,
+    stageSize: 45,
+    snakeSize: 12,
+    itemsCount: 7,
+    blockSize: 16
+  },
+  5: {
+    bombsCount: 7,
+    stageSize: 50,
+    snakeSize: 15,
+    itemsCount: 10,
+    blockSize: 14
   }
 };
 
 export const TITLE_FONT_SIZE_BY_LEVEL = {
   1: 40,
   2: 50,
-  3: 56
+  3: 56,
+  4: 52,
+  5: 56
 };
