@@ -110,10 +110,10 @@ export default class Game extends BaseObject {
     }
 
     // Set Snake Position
-    const snakeLastPosition = this.snake.position.length - 1;
+    const snakeHeadIdx = this.snake.position.length - 1;
 
     this.snake.position.forEach(({ x, y }, idx) => {
-      this.frame[y][x] = idx === snakeLastPosition
+      this.frame[y][x] = idx === snakeHeadIdx
         ? 'snake-head'
         : 'snake-body';
     });
@@ -158,9 +158,17 @@ export default class Game extends BaseObject {
         const filteredItemPosition = this.item.position.filter(({ x, y }) =>
           !(x === snakeCollisionInfo.position.x && y === snakeCollisionInfo.position.y)
         );
-        const randomRotateDegree = ROTATE_DEGREE[
+        const currRotateDegree = this.rotateDegree;
+        let randomRotateDegree = ROTATE_DEGREE[
           getRandomNumber(0, ROTATE_DEGREE.length)
         ];
+
+        // Prevent the same rotate from being set
+        while (currRotateDegree === randomRotateDegree) {
+          randomRotateDegree = ROTATE_DEGREE[
+            getRandomNumber(0, ROTATE_DEGREE.length)
+          ];
+        }
 
         this.item.setPosition(filteredItemPosition);
         this.setRotateDegree(randomRotateDegree);
