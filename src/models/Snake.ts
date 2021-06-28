@@ -1,5 +1,6 @@
 import range from 'lodash.range';
 
+import BasePositionObject from './BasePositionObject';
 import { ObjectPosition } from '../types/position';
 import { AVAILABLE_KEY } from '../constants/key';
 
@@ -10,14 +11,15 @@ type SnakeCollisionInfo = {
   position: ObjectPosition;
 };
 
-export default class Snake {
+export default class Snake extends BasePositionObject<ObjectPosition[]> {
   private size: number;
   private stageSize: number;
   private startPosition: SnakeStartPosition;
-  private _position: ObjectPosition[];
   private _collisionInfo: SnakeCollisionInfo;
 
   constructor(size: number, stageSize: number, startPosition: SnakeStartPosition) {
+    super();
+
     this.size = size;
     this.stageSize = stageSize;
     this.startPosition = startPosition;
@@ -26,11 +28,7 @@ export default class Snake {
       position: null
     };
 
-    this.setInitialPosition();
-  }
-
-  public get position() {
-    return this._position;
+    this.render();
   }
 
   public get collisionInfo() {
@@ -51,9 +49,11 @@ export default class Snake {
       return;
     }
 
-    const newPosition = [...this._position];
-    const positionLastIdx = this._position.length - 1;
-    const currPositionHead = this._position[positionLastIdx];
+    const currPosition = this.position;
+
+    const newPosition = [...currPosition];
+    const positionLastIdx = currPosition.length - 1;
+    const currPositionHead = currPosition[positionLastIdx];
 
     switch(e.key) {
       case 'ArrowUp': {
@@ -106,12 +106,12 @@ export default class Snake {
       }
     }
 
-    const currPositionBodyStarts = this._position.length - 2;
+    const currPositionBodyStarts = currPosition.length - 2;
 
     for (let idx = currPositionBodyStarts; idx >= 0; idx--) {
       newPosition[idx] = {
-        x: this._position[idx + 1].x,
-        y: this._position[idx + 1].y
+        x: currPosition[idx + 1].x,
+        y: currPosition[idx + 1].y
       }
     }
 
@@ -119,6 +119,10 @@ export default class Snake {
 
     // Detect collision after setting new position
     this.detectCollision(bombPosition, goalPosition, itemPosition);
+  }
+
+  protected render() {
+    this.setInitialPosition();
   }
 
   private detectCollision(
@@ -149,7 +153,8 @@ export default class Snake {
   }
 
   private collisionInfoWithBomb(bombPosition: ObjectPosition[]) {
-    const head = this._position[this._position.length - 1];
+    const currPosition = this.position;
+    const head = currPosition[currPosition.length - 1];
     const collidedBomb = bombPosition.filter(({ x, y }) =>
       x === head.x && y === head.y
     );
@@ -161,7 +166,8 @@ export default class Snake {
   }
 
   private collisionInfoWithGoal(goalPosition: ObjectPosition) {
-    const head = this._position[this._position.length - 1];
+    const currPosition = this.position;
+    const head = currPosition[currPosition.length - 1];
     const isCollided = head.x === goalPosition.x
       && head.y === goalPosition.y;
 
@@ -172,7 +178,8 @@ export default class Snake {
   }
 
   private collisionInfoWithItem(itemPosition: ObjectPosition[]) {
-    const head = this._position[this._position.length - 1];
+    const currPosition = this.position;
+    const head = currPosition[currPosition.length - 1];
     const collidedItem = itemPosition.filter(({ x, y }) =>
       x === head.x && y === head.y
     );
@@ -239,9 +246,5 @@ export default class Snake {
       default:
         break;
     }
-  }
-
-  private setPosition(position: ObjectPosition[]) {
-    this._position = position;
   }
 }

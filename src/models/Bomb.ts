@@ -1,13 +1,15 @@
+import BasePositionObject from './BasePositionObject';
 import { ObjectPosition } from '../types/position';
 import { getRandomNumber } from '../utils/random';
 
-export default class Bomb {
+export default class Bomb extends BasePositionObject<ObjectPosition[]> {
   private stageSize: number;
-  private _position: ObjectPosition[];
   private itemPosition: ObjectPosition[];
   private count: number;
 
   constructor(count: number, stageSize: number, itemPosition: ObjectPosition[]) {
+    super();
+
     this.stageSize = stageSize;
     this.itemPosition = itemPosition;
     this.count = count;
@@ -15,11 +17,7 @@ export default class Bomb {
     this.render();
   }
 
-  public get position() {
-    return this._position;
-  }
-
-  private render() {
+  protected render() {
     const randomPosition = [];
     let innerRandomPosition = [];
 
@@ -50,9 +48,5 @@ export default class Bomb {
     }
 
     this.setPosition(randomPosition);
-  }
-
-  private setPosition(position: ObjectPosition[]) {
-    this._position = position;
   }
 }

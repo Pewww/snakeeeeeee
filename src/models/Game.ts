@@ -1,3 +1,4 @@
+import BaseObject from './BaseObject';
 import Snake from './Snake';
 import Bomb from './Bomb';
 import Goal from './Goal';
@@ -17,7 +18,7 @@ type StageBaseFrame = 'block'
 
 type GameStatus = 'start' | 'success' | 'over';
 
-export default class Game {
+export default class Game extends BaseObject {
   private stageSize: number;
   private blockSize: number;
   private frame: StageBaseFrame[][] = [];
@@ -31,6 +32,8 @@ export default class Game {
   private item: Item;
 
   constructor(stageSize: number, blockSize: number, level: number) {
+    super();
+
     this.stageSize = stageSize;
     this.blockSize = blockSize;
     this._status = null;
@@ -45,11 +48,15 @@ export default class Game {
     this.setKeyDownEventHandler();
   }
 
+  public start() {
+    this.render();
+  }
+
   public get status() {
     return this._status;
   }
 
-  public render() {
+  protected render() {
     this.buildFrame();
     this.renderStage();
   }

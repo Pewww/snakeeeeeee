@@ -1,23 +1,21 @@
-import { ObjectPosition } from '../types/position';
+import BasePositionObject from './BasePositionObject';
 import type { SnakeStartPosition } from './Snake';
+import { ObjectPosition } from '../types/position';
 
-export default class Goal {
+export default class Goal extends BasePositionObject<ObjectPosition> {
   private stageSize: number;
   private snakeStartPosition: SnakeStartPosition;
-  private _position: ObjectPosition;
 
   constructor(stageSize: number, snakeStartPosition: SnakeStartPosition) {
+    super();
+
     this.stageSize = stageSize;
     this.snakeStartPosition = snakeStartPosition;
 
     this.render();
   }
 
-  public get position() {
-    return this._position;
-  }
-
-  private render() {
+  protected render() {
     switch(this.snakeStartPosition) {
       case 'top-left': {
         this.setPosition({
@@ -54,9 +52,5 @@ export default class Goal {
       default:
         break;
     }
-  }
-
-  private setPosition(position: ObjectPosition) {
-    this._position = position;
   }
 }

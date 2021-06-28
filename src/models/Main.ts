@@ -8,6 +8,6 @@ export default class Main {
   }
 
   public render() {
-    this.game.render();
+    this.game.start();
   }
 }
