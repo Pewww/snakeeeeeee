@@ -143,56 +143,58 @@ export default class Game extends BaseObject {
   }
 
   private setKeyDownEventHandler() {
-    document.body.addEventListener('keydown', e => {
-      this.snake.moveSnake(
-        e,
-        this.bomb.position,
-        this.goal.position,
-        this.item.position
+    document.body.addEventListener('keydown', this.handleKeyDownEvent.bind(this));
+  }
+
+  private handleKeyDownEvent(e: KeyboardEvent) {
+    this.snake.moveSnake(
+      e,
+      this.bomb.position,
+      this.goal.position,
+      this.item.position
+    );
+
+    // Set Game Status
+    const snakeCollisionInfo = this.snake.collisionInfo;
+
+    if (snakeCollisionInfo.target === 'Item') {
+      const filteredItemPosition = this.item.position.filter(({ x, y }) =>
+        !(x === snakeCollisionInfo.position.x && y === snakeCollisionInfo.position.y)
       );
+      const currRotateDegree = this.rotateDegree;
+      let randomRotateDegree = ROTATE_DEGREE[
+        getRandomNumber(0, ROTATE_DEGREE.length)
+      ];
 
-      // Set Game Status
-      const snakeCollisionInfo = this.snake.collisionInfo;
-
-      if (snakeCollisionInfo.target === 'Item') {
-        const filteredItemPosition = this.item.position.filter(({ x, y }) =>
-          !(x === snakeCollisionInfo.position.x && y === snakeCollisionInfo.position.y)
-        );
-        const currRotateDegree = this.rotateDegree;
-        let randomRotateDegree = ROTATE_DEGREE[
+      // Prevent the same rotate from being set
+      while (currRotateDegree === randomRotateDegree) {
+        randomRotateDegree = ROTATE_DEGREE[
           getRandomNumber(0, ROTATE_DEGREE.length)
         ];
-
-        // Prevent the same rotate from being set
-        while (currRotateDegree === randomRotateDegree) {
-          randomRotateDegree = ROTATE_DEGREE[
-            getRandomNumber(0, ROTATE_DEGREE.length)
-          ];
-        }
-
-        this.item.setPosition(filteredItemPosition);
-        this.setRotateDegree(randomRotateDegree);
-      } else if (snakeCollisionInfo.target === 'Bomb') {
-        this.setStatus('over');
-      } else if (snakeCollisionInfo.target === 'Goal') {
-        const isAllItemsEatenBySnake = !this.item.position.length;
-
-        this.setStatus(isAllItemsEatenBySnake
-          ? 'success'
-          : 'over'
-        );
       }
 
-      this.render();
-      this.snake.setCollisionInfo({
-        target: null,
-        position: null
-      });
+      this.item.setPosition(filteredItemPosition);
+      this.setRotateDegree(randomRotateDegree);
+    } else if (snakeCollisionInfo.target === 'Bomb') {
+      this.setStatus('over');
+    } else if (snakeCollisionInfo.target === 'Goal') {
+      const isAllItemsEatenBySnake = !this.item.position.length;
 
-      if (this._status !== null) {
-        this.showResultByStatus();
-      }
+      this.setStatus(isAllItemsEatenBySnake
+        ? 'success'
+        : 'over'
+      );
+    }
+
+    this.render();
+    this.snake.setCollisionInfo({
+      target: null,
+      position: null
     });
+
+    if (this._status !== null) {
+      this.showResultByStatus();
+    }
   }
 
   private showResultByStatus() {

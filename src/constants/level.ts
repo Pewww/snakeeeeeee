@@ -41,5 +41,5 @@ export const TITLE_FONT_SIZE_BY_LEVEL = {
   2: 50,
   3: 56,
   4: 52,
-  5: 56
+  5: 50
 };
