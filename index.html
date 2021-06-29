@@ -3,7 +3,8 @@
     <title>snakeeeeeee</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
+    <link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'>
     <style>
       html, body {
         margin: 0;
@@ -11,13 +12,140 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: #202020;
+        background-color: #262626;
       }
 
-      h1 {
+      .green {
+        color: #1d7320;
+      }
+
+      .red {
+        color: #d62020;
+      }
+
+      .blue {
+        color: #7488fb;
+      }
+
+      .white {
+        color: #fff;
+      }
+
+      h1, h2 {
         position: absolute;
         font-family: Montserrat;
         color: #fff;
+      }
+
+      h1 {
+        font-size: 80px;
+        top: 50px;
+        font-weight: 800;
+      }
+
+      h2 {
+        font-weight: 600;
+      }
+
+      h1 span {
+        position: relative;
+        padding: 0 15px;
+      }
+
+      h1 span:nth-child(odd) {
+        top: 30px;
+      }
+
+      h1 span:nth-child(4n) {
+        top: 80px;
+      }
+
+      #game-connection-cover {
+        display: none;
+      }
+
+      #game-connection-cover button {
+        margin: 0 auto;
+        display: block;
+        font-family: Montserrat;
+        color: #fff;
+        font-size: 42px;
+        font-weight: 600;
+        text-align: center;
+        letter-spacing: 2px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        transition: .4s;
+      }
+
+      #game-connection-cover button:hover {
+        letter-spacing: 4px;
+      }
+
+      #game-connection-cover button:first-child {
+        margin-bottom: 30px;
+      }
+
+      #how-to-popup-wrapper {
+        display: none;
+      }
+      
+      #how-to-popup-wrapper #how-to-popup-overlay {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 2;
+      }
+
+      #how-to-popup-wrapper #how-to-popup {
+        box-sizing: border-box;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 400px;
+        height: 480px;
+        background-color: #282828;
+        border-radius: 5px;
+        box-shadow: 38px 38px 56px #1e1e1e, 
+          -25px -25px 38px #1e1e1e;
+        z-index: 3;
+        padding: 20px;
+      }
+
+      #how-to-popup-wrapper #how-to-popup .close-btn {
+        position: absolute;
+        font-family: Montserrat;
+        color: #e8e6e6;
+        font-size: 20px;
+        top: 25px;
+        right: 20px;
+        cursor: pointer;
+        background: none;
+        border: none;
+      }
+
+      #how-to-popup-wrapper #how-to-popup p {
+        font-size: 14px;
+        font-family: 'Spoqa Han Sans Neo', 'sans-serif';
+        color: #e8e6e6;
+        line-height: 1.5;
+      }
+
+      #how-to-popup-wrapper #how-to-popup h3 {
+        text-align: center;
+        font-family: 'Spoqa Han Sans Neo', 'sans-serif';
+        font-size: 24px;
+        color: #e8e6e6;
+      }
+
+      #how-to-popup-wrapper #how-to-popup .line {
+        height: 3px;
+        background-color: #e8e6e6;
+        margin: 30px 0;
       }
 
       ul {
@@ -66,6 +194,40 @@
     </style>
   </head>
   <body>
-    <h1 id="title"></h1>
+    <!--
+    <h1 id="main-title">
+      <div>
+        <span>S</span>
+        <span>N</span>
+        <span>A</span>
+        <span>K</span>
+        <span>E</span>
+      </div>
+    </h1>
+    -->
+    <div id="game-connection-cover">
+      <button id="game-start-btn">GAME START</button>
+      <button id="how-to-btn">HOW TO?</button>
+    </div>
+    <div id="how-to-popup-wrapper">
+      <div id="how-to-popup-overlay"></div>
+      <div id="how-to-popup">
+        <h3>게임 방법</h3>
+        <!-- 아이콘 쓰기 귀찮음.. -->
+        <button class="close-btn">x</button>
+        <p>뱀을 움직여 아이템을 먹고 장애물을 피하면서 최종 목적지까지 도착하는 게임이에요.</p>
+        <p>뱀은 방향키로 움직일 수 있어요!</p>
+        <p>목적지에 도착할 시 다음 단계로 넘어갈 수 있으며, 현재 총 5개의 레벨이 존재해요.</p>
+        <p>뱀은 <span class="green">초록색</span>,
+          장애물은 <span class="red">빨간색</span>,
+          아이템은 <span class="blue">파란색</span>,
+          목적지는 <span class="white">흰색</span>이에요 :D
+        </p>
+        <div class="line"></div>
+        <p>아이템을 먹으면 맵이 90°, 180°, 270°중 랜덤으로 회전돼요.</p>
+        <p>또한, 아이템을 모두 먹지 않고 목적지에 도착 시 게임 오버 처리되니 조심해야해요!</p>
+      </div>
+    </div>
+    <h2 id="level-title"></h1>
   </body>
 </html>
