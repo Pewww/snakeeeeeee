@@ -41,8 +41,8 @@ export default class Game extends BaseObject {
     this.level = level;
 
     this.snake = new Snake(OBJECT_STATUS_BY_LEVEL[level].snakeSize, stageSize, 'bottom-left');
-    this.item = new Item(OBJECT_STATUS_BY_LEVEL[level].itemsCount, stageSize);
-    this.bomb = new Bomb(OBJECT_STATUS_BY_LEVEL[level].bombsCount, stageSize, this.item.position);
+    this.bomb = new Bomb(OBJECT_STATUS_BY_LEVEL[level].bombsCount, stageSize);
+    this.item = new Item(OBJECT_STATUS_BY_LEVEL[level].itemsCount, stageSize, this.bomb.position);
     this.goal = new Goal(stageSize, 'bottom-left');
 
     this.setKeyDownEventHandler();
