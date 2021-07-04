@@ -1,13 +1,16 @@
 import range from 'lodash.range';
 
+import type { StageBaseFrame } from '../Game';
 import BasePositionObject from './BasePositionObject';
 import { ObjectPosition } from '../types/position';
 import { AVAILABLE_KEY } from '../constants/key';
 
 export type SnakeStartPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 
+type SnakeCollisionTarget = 'bomb' | 'item' | 'goal';
+
 type SnakeCollisionInfo = {
-  target: 'Bomb' | 'Item' | 'Goal';
+  target: SnakeCollisionTarget;
   position: ObjectPosition;
 };
 
@@ -39,12 +42,7 @@ export default class Snake extends BasePositionObject<ObjectPosition[]> {
     this._collisionInfo = collisionInfo;
   }
 
-  public moveSnake(
-    e: KeyboardEvent,
-    bombPosition: ObjectPosition[],
-    goalPosition: ObjectPosition,
-    itemPosition: ObjectPosition[]
-  ) {
+  public moveSnake(e: KeyboardEvent, stageFrame?: StageBaseFrame[][]) {
     if (!(e.key in AVAILABLE_KEY)) {
       return;
     }
@@ -53,53 +51,53 @@ export default class Snake extends BasePositionObject<ObjectPosition[]> {
 
     const newPosition = [...currPosition];
     const positionLastIdx = currPosition.length - 1;
-    const currPositionHead = currPosition[positionLastIdx];
+    const headOfCurrPosition = currPosition[positionLastIdx];
 
     switch(e.key) {
       case 'ArrowUp': {
-        if (this.isYPositionOutOfMap(currPositionHead.y - 1)) {
+        if (this.isYPositionOutOfMap(headOfCurrPosition.y - 1)) {
           return;
         }
 
         newPosition[positionLastIdx] = {
-          x: currPositionHead.x,
-          y: currPositionHead.y - 1
+          x: headOfCurrPosition.x,
+          y: headOfCurrPosition.y - 1
         };
 
         break;
       }
       case 'ArrowLeft': {
-        if (this.isXPositionOutOfMap(currPositionHead.x - 1)) {
+        if (this.isXPositionOutOfMap(headOfCurrPosition.x - 1)) {
           return;
         }
 
         newPosition[positionLastIdx] = {
-          x: currPositionHead.x - 1,
-          y: currPositionHead.y
+          x: headOfCurrPosition.x - 1,
+          y: headOfCurrPosition.y
         };
 
         break;
       }
       case 'ArrowRight': {
-        if (this.isXPositionOutOfMap(currPositionHead.x + 1)) {
+        if (this.isXPositionOutOfMap(headOfCurrPosition.x + 1)) {
           return;
         }
 
         newPosition[positionLastIdx] = {
-          x: currPositionHead.x + 1,
-          y: currPositionHead.y
+          x: headOfCurrPosition.x + 1,
+          y: headOfCurrPosition.y
         };
 
         break;
       }
       case 'ArrowDown': {
-        if (this.isYPositionOutOfMap(currPositionHead.y + 1)) {
+        if (this.isYPositionOutOfMap(headOfCurrPosition.y + 1)) {
           return;
         }
 
         newPosition[positionLastIdx] = {
-          x: currPositionHead.x,
-          y: currPositionHead.y + 1
+          x: headOfCurrPosition.x,
+          y: headOfCurrPosition.y + 1
         };
 
         break;
@@ -115,79 +113,36 @@ export default class Snake extends BasePositionObject<ObjectPosition[]> {
       }
     }
 
-    this.setPosition(newPosition);
+    const headOfNewPosition = newPosition[positionLastIdx];
 
-    // Detect collision after setting new position
-    this.detectCollision(bombPosition, goalPosition, itemPosition);
+    // Detect collision before setting new position
+    this.detectCollision(stageFrame, headOfNewPosition);
+
+    this.setPosition(newPosition);
   }
 
   protected render() {
     this.setInitialPosition();
   }
 
-  private detectCollision(
-    bombPosition: ObjectPosition[],
-    goalPosition: ObjectPosition,
-    itemPosition: ObjectPosition[]
-  ) {
-    const collisionInfoWithGoal = this.collisionInfoWithGoal(goalPosition);
-    const collisionInfoWithItem = this.collisionInfoWithItem(itemPosition);
-    const collisionInfoWithBomb = this.collisionInfoWithBomb(bombPosition);
+  private detectCollision(stageFrame: StageBaseFrame[][], headOfNewPosition: ObjectPosition) {
+    const {
+      x: headXPosition,
+      y: headYPosition
+    } = headOfNewPosition;
 
-    if (collisionInfoWithGoal.isCollided) {
+    const frameType = stageFrame[headYPosition][headXPosition] as SnakeCollisionTarget;
+    const isCollided = ['bomb', 'item', 'goal'].includes(frameType);
+
+    if (isCollided) {
       this.setCollisionInfo({
-        target: 'Goal',
-        position: collisionInfoWithGoal.position
-      });
-    } else if (collisionInfoWithItem.isCollided) {
-      this.setCollisionInfo({
-        target: 'Item',
-        position: collisionInfoWithItem.position
-      });
-    } else if (collisionInfoWithBomb.isCollided) {
-      this.setCollisionInfo({
-        target: 'Bomb',
-        position: collisionInfoWithBomb.position
+        target: frameType,
+        position: {
+          x: headXPosition,
+          y: headYPosition
+        }
       });
     }
-  }
-
-  private collisionInfoWithBomb(bombPosition: ObjectPosition[]) {
-    const currPosition = this.position;
-    const head = currPosition[currPosition.length - 1];
-    const collidedBomb = bombPosition.filter(({ x, y }) =>
-      x === head.x && y === head.y
-    );
-
-    return {
-      isCollided: !!collidedBomb.length,
-      position: collidedBomb[0]
-    };
-  }
-
-  private collisionInfoWithGoal(goalPosition: ObjectPosition) {
-    const currPosition = this.position;
-    const head = currPosition[currPosition.length - 1];
-    const isCollided = head.x === goalPosition.x
-      && head.y === goalPosition.y;
-
-    return {
-      isCollided,
-      position: goalPosition
-    };
-  }
-
-  private collisionInfoWithItem(itemPosition: ObjectPosition[]) {
-    const currPosition = this.position;
-    const head = currPosition[currPosition.length - 1];
-    const collidedItem = itemPosition.filter(({ x, y }) =>
-      x === head.x && y === head.y
-    );
-
-    return {
-      isCollided: !!collidedItem.length,
-      position: collidedItem[0]
-    };
   }
 
   private isXPositionOutOfMap(x: number) {

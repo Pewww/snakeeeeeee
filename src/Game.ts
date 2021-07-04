@@ -1,15 +1,15 @@
-import BaseObject from './BaseObject';
-import Snake from './Snake';
-import Bomb from './Bomb';
-import Goal from './Goal';
-import Item from './Item';
+import BaseObject from './models/BaseObject';
+import Snake from './models/Snake';
+import Bomb from './models/Bomb';
+import Goal from './models/Goal';
+import Item from './models/Item';
 
-import { $create, $id } from '../utils/dom';
-import { getRandomNumber } from '../utils/random';
-import { ROTATE_DEGREE } from '../constants/rotate';
-import { OBJECT_STATUS_BY_LEVEL } from '../constants/level';
+import { $create, $id } from './utils/dom';
+import { getRandomNumber } from './utils/random';
+import { ROTATE_DEGREE } from './constants/rotate';
+import { OBJECT_STATUS_BY_LEVEL, MAX_LEVEL } from './constants/level';
 
-type StageBaseFrame = 'block'
+export type StageBaseFrame = 'block'
   | 'snake-body'
   | 'snake-head'
   | 'bomb'
@@ -147,21 +147,17 @@ export default class Game extends BaseObject {
   }
 
   private handleKeyDownEvent(e: KeyboardEvent) {
-    this.snake.moveSnake(
-      e,
-      this.bomb.position,
-      this.goal.position,
-      this.item.position
-    );
+    this.snake.moveSnake(e, this.frame);
 
     // Set Game Status
     const snakeCollisionInfo = this.snake.collisionInfo;
 
-    if (snakeCollisionInfo.target === 'Item') {
+    if (snakeCollisionInfo.target === 'item') {
       const filteredItemPosition = this.item.position.filter(({ x, y }) =>
         !(x === snakeCollisionInfo.position.x && y === snakeCollisionInfo.position.y)
       );
       const currRotateDegree = this.rotateDegree;
+      // Flip (Optional)
       let randomRotateDegree = ROTATE_DEGREE[
         getRandomNumber(0, ROTATE_DEGREE.length)
       ];
@@ -175,9 +171,9 @@ export default class Game extends BaseObject {
 
       this.item.setPosition(filteredItemPosition);
       this.setRotateDegree(randomRotateDegree);
-    } else if (snakeCollisionInfo.target === 'Bomb') {
+    } else if (snakeCollisionInfo.target === 'bomb') {
       this.setStatus('over');
-    } else if (snakeCollisionInfo.target === 'Goal') {
+    } else if (snakeCollisionInfo.target === 'goal') {
       const isAllItemsEatenBySnake = !this.item.position.length;
 
       this.setStatus(isAllItemsEatenBySnake
@@ -193,15 +189,16 @@ export default class Game extends BaseObject {
     });
 
     if (this._status !== null) {
-      this.showResultByStatus();
+      // Prevent alerts from being exposed before rendering the snake
+      setTimeout(()=> {
+        this.showResultByStatus()
+      }, 0);
     }
   }
 
   private showResultByStatus() {
     switch(this._status) {
       case 'success': {
-        const MAX_LEVEL = 5;
-
         if (this.level < MAX_LEVEL) {
           const isConfirmed = confirm(`Level ${this.level} passed!\nGo to next level.`);
 

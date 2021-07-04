@@ -19,12 +19,14 @@ export default class Bomb extends BasePositionObject<ObjectPosition[]> {
 
   protected render() {
     const randomPosition = [];
-    let innerRandomPosition = [];
 
     for (let y = 1; y < this.stageSize - 1; y++) {
+      const innerRandomPosition = [];
+
       while (innerRandomPosition.length < this.count) {
         const randomX = getRandomNumber(1, this.stageSize - 2);
         // @TODO: Prevent Bombs from completely blocking the way to the Item.
+        // Item에서 Bomb의 position을 알도록
   
         const positionAlreadyExistsInItem = !!this.itemPosition.filter(({ x: itemX, y: itemY }) =>
           itemX === randomX && itemY === y
@@ -44,7 +46,6 @@ export default class Bomb extends BasePositionObject<ObjectPosition[]> {
       }
 
       randomPosition.push(...innerRandomPosition);
-      innerRandomPosition = [];
     }
 
     this.setPosition(randomPosition);

@@ -36,6 +36,8 @@ export const OBJECT_STATUS_BY_LEVEL = {
   }
 };
 
+export const MAX_LEVEL = 5;
+
 export const TITLE_FONT_SIZE_BY_LEVEL = {
   1: 40,
   2: 50,

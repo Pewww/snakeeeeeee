@@ -1,7 +1,6 @@
 import * as queryString from 'query-string';
 
-import Main from './models/Main';
-import Game from './models/Game';
+import Game from './Game';
 import Popup from './models/Popup';
 import { OBJECT_STATUS_BY_LEVEL, TITLE_FONT_SIZE_BY_LEVEL } from './constants/level';
 import { $id, $class } from './utils/dom';
@@ -10,13 +9,11 @@ const parsedQuery = queryString.parse(location.search);
 const level = Number((parsedQuery as Record<string, unknown>).level);
 
 if (level) {
-  new Main(
-    new Game(
-      OBJECT_STATUS_BY_LEVEL[level].stageSize,
-      OBJECT_STATUS_BY_LEVEL[level].blockSize,
-      level
-    )
-  ).render();
+  new Game(
+    OBJECT_STATUS_BY_LEVEL[level].stageSize,
+    OBJECT_STATUS_BY_LEVEL[level].blockSize,
+    level
+  ).start();
   
   const levelTitleElement = $id('level-title');
   const rootElement = $id('root');
