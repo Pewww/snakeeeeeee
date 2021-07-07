@@ -7,7 +7,7 @@ import { AVAILABLE_KEY } from '../constants/key';
 
 export type SnakeStartPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 
-type SnakeCollisionTarget = 'bomb' | 'item' | 'goal';
+type SnakeCollisionTarget = Extract<StageBaseFrame, 'bomb' | 'item' | 'goal'>;
 
 type SnakeCollisionInfo = {
   target: SnakeCollisionTarget;
