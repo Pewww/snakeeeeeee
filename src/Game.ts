@@ -152,34 +152,44 @@ export default class Game extends BaseObject {
     // Set Game Status
     const snakeCollisionInfo = this.snake.collisionInfo;
 
-    if (snakeCollisionInfo.target === 'item') {
-      const filteredItemPosition = this.item.position.filter(({ x, y }) =>
-        !(x === snakeCollisionInfo.position.x && y === snakeCollisionInfo.position.y)
-      );
-      const currRotateDegree = this.rotateDegree;
-      // Flip (Optional)
-      let randomRotateDegree = ROTATE_DEGREE[
-        getRandomNumber(0, ROTATE_DEGREE.length)
-      ];
-
-      // Prevent the same rotate from being set
-      while (currRotateDegree === randomRotateDegree) {
-        randomRotateDegree = ROTATE_DEGREE[
+    switch(snakeCollisionInfo.target) {
+      case 'item': {
+        const filteredItemPosition = this.item.position.filter(({ x, y }) =>
+          !(x === snakeCollisionInfo.position.x && y === snakeCollisionInfo.position.y)
+        );
+        const currRotateDegree = this.rotateDegree;
+        // Flip (Optional)
+        let randomRotateDegree = ROTATE_DEGREE[
           getRandomNumber(0, ROTATE_DEGREE.length)
         ];
+
+        // Prevent the same rotate from being set
+        while (currRotateDegree === randomRotateDegree) {
+          randomRotateDegree = ROTATE_DEGREE[
+            getRandomNumber(0, ROTATE_DEGREE.length)
+          ];
+        }
+
+        this.item.setPosition(filteredItemPosition);
+        this.setRotateDegree(randomRotateDegree);
+
+        break;
       }
+      case 'bomb': {
+        this.setStatus('over');
 
-      this.item.setPosition(filteredItemPosition);
-      this.setRotateDegree(randomRotateDegree);
-    } else if (snakeCollisionInfo.target === 'bomb') {
-      this.setStatus('over');
-    } else if (snakeCollisionInfo.target === 'goal') {
-      const isAllItemsEatenBySnake = !this.item.position.length;
+        break;
+      }
+      case 'goal': {
+        const isAllItemsEatenBySnake = !this.item.position.length;
 
-      this.setStatus(isAllItemsEatenBySnake
-        ? 'success'
-        : 'over'
-      );
+        this.setStatus(isAllItemsEatenBySnake
+          ? 'success'
+          : 'over'
+        );
+
+        break;
+      }
     }
 
     this.render();
